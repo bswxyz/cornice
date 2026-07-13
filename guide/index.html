@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script>
+  document.documentElement.classList.add('js');
+  try { var t = localStorage.getItem('cornice-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<title>How Cornice was built — Parable build guide</title>
+<meta name="description" content="A build guide for Cornice: the idea, the stack, the live lift-status board wired to an interactive SVG piste map, the details that matter, and how to ship it on GitHub Pages." />
+<meta name="robots" content="index,follow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  .doc { position: relative; z-index: 1; width: min(100% - 2.4rem, 820px); margin: 2rem auto 5rem; }
+  .doc-back { display: inline-flex; align-items: center; gap: .4rem; color: var(--dim); text-decoration: none; font-size: .86rem; margin-bottom: 1.6rem; }
+  .doc-back:hover { color: var(--ink); }
+  .doc h1 { font-size: clamp(2.6rem, 7vw, 4.4rem); margin: .4rem 0 .4rem; letter-spacing: .01em; }
+  .doc .lede { margin-bottom: 2.4rem; }
+  .doc h2 { font-size: clamp(1.5rem, 3.4vw, 2.1rem); margin: 2.8rem 0 .6rem; letter-spacing: .02em; }
+  .doc p { color: var(--dim); margin: .7rem 0; }
+  .doc p strong { color: var(--ink); font-weight: 600; }
+  .doc ul { color: var(--dim); padding-left: 1.1rem; margin: .7rem 0; }
+  .doc li { margin: .35rem 0; }
+  .doc a.inl { color: var(--accent); }
+  pre { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.1rem; overflow-x: auto; margin: 1rem 0; }
+  code { font-family: var(--font-m); font-size: .82rem; }
+  pre code { color: var(--ink); line-height: 1.6; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.2rem 0; }
+  .tag-row span { font-family: var(--font-m); font-size: .72rem; padding: .3rem .6rem; border: 1px solid var(--line); border-radius: 999px; color: var(--dim); }
+  .callout { border-left: 3px solid var(--accent); background: color-mix(in oklab, var(--accent) 6%, transparent); padding: .9rem 1.1rem; border-radius: 0 10px 10px 0; margin: 1.4rem 0; }
+  .callout p { margin: 0; color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="backdrop" aria-hidden="true">
+  <div class="ridge">
+    <svg class="ridge-svg" viewBox="0 0 1440 520" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+      <path class="ridge-far"  d="M0 400 L120 300 L250 360 L380 250 L520 340 L640 240 L780 330 L900 220 L1040 320 L1180 250 L1320 330 L1440 280 L1440 520 L0 520 Z"/>
+      <path class="ridge-mid"  d="M0 460 L160 330 L300 410 L430 300 L560 400 L700 280 L860 390 L1000 300 L1150 390 L1290 310 L1440 380 L1440 520 L0 520 Z"/>
+      <path class="ridge-near" d="M0 520 L140 420 L280 480 L420 380 L520 440 L640 350 L760 430 L900 360 L1060 450 L1220 380 L1360 460 L1440 420 L1440 520 Z"/>
+    </svg>
+  </div>
+</div>
+
+<main class="doc">
+  <a class="doc-back" href="../">← Back to Cornice</a>
+  <p class="eyebrow mono">[ Parable build guide ]</p>
+  <h1>How Cornice was built</h1>
+  <p class="lede">A high-alpine resort, rendered without a single photograph. The signature is a
+    pair of linked pieces: a <strong>live lift-status board</strong> and an <strong>interactive SVG
+    piste map</strong> — plus a falling-snow canvas that knows when to stop.</p>
+
+  <div class="tag-row">
+    <span>static · no build step</span><span>vanilla JS</span><span>Anton / Inter / Space Mono</span><span>light + dark</span><span>reduced-motion aware</span>
+  </div>
+
+  <h2>The idea</h2>
+  <p>A ski resort lives on two questions you ask before you've had coffee: <em>which lifts are
+    turning</em>, and <em>what can I ski down</em>. So those two became the heart of the page — a
+    board that reads like the one at the base station, and a map you can actually poke. Everything
+    else (the village, the passes) hangs off that. Voice is crisp and a little proud, the way a good
+    resort talks: "94 runs. 3,100 vertical metres. One very good reason to set an early alarm."</p>
+
+  <h2>The stack</h2>
+  <p>Deliberately plain. One <code>index.html</code>, one <code>styles.css</code>, one
+    <code>main.js</code>. No framework, no bundler, no CDN — the snow is a hand-rolled 2D canvas, the
+    mountain and every run are inline SVG, so the page has zero runtime dependencies and ships
+    straight to GitHub Pages. Type is <strong>Anton</strong> (a tall condensed display face with the
+    energy of resort signage), <strong>Inter</strong> for body, and <strong>Space&nbsp;Mono</strong>
+    for the numbers a mountain runs on — altitudes, wait times, temperatures.</p>
+
+  <h2>Signature technique — the board wired to the map</h2>
+  <p>The lift board isn't a static table: wait-time numbers count up from zero when the board scrolls
+    into view, and each status pill carries a pulsing dot (green open, amber hold, red closed). The
+    counter is the same tiny <code>requestAnimationFrame</code> loop that drives the conditions strip —
+    one function, cubic-eased, reused for every number on the page.</p>
+  <pre><code>// one counter, reused for conditions + lift wait times
+const tick = (t) => {
+  const p = clamp((t - t0) / dur, 0, 1);
+  const eased = 1 - Math.pow(1 - p, 3);   // cubic-out — a settle
+  el.textContent = (to * eased).toFixed(dec);
+  if (p &lt; 1) requestAnimationFrame(tick);
+};</code></pre>
+  <p>The piste map is the interactive half. Each run is an SVG <code>&lt;path&gt;</code> carrying its
+    own name, length and grade in <code>data-</code> attributes, mirrored by a row in the run list
+    beside it. Hovering or focusing <em>either</em> the line or the row lights up its twin and writes
+    the readout; the grade filter just sets one attribute on the map and lets CSS fade the rest.</p>
+  <pre><code>// hover a line OR its list row — both light up, readout updates
+const activate = (id) => {
+  const rec = byId.get(id);
+  rec.path.classList.add('is-active');
+  rec.path.parentNode.appendChild(rec.path);   // bring the run to the front
+  rec.row?.classList.add('is-active');
+  readout.innerHTML = name + diff + length;
+};
+// filter is pure CSS: .pistemap[data-filter="adv"] .run:not(.run--adv){opacity:.08}</code></pre>
+
+  <h2>Details that matter</h2>
+  <ul>
+    <li><strong>Cost, not vanity.</strong> The snow canvas caps device-pixel-ratio at 1.5, throttles
+      to ~30fps, and scales its flake count to the viewport area (40–150 flakes) — so it stays smooth
+      on a phone and invisible on the GPU.</li>
+    <li><strong>It pauses when unseen.</strong> An <code>IntersectionObserver</code> stops the snow
+      loop when the canvas leaves the viewport, and a <code>visibilitychange</code> listener freezes
+      it the moment you switch tabs.</li>
+    <li><strong>Reduced motion draws one frame.</strong> Under <code>prefers-reduced-motion</code>
+      the snow paints a single settled field, the pulses stop, and every counter/reveal resolves
+      instantly — no animation loop runs at all.</li>
+    <li><strong>Grade is never colour-only.</strong> Every run is labelled in the readout and the run
+      list, has an SVG <code>&lt;title&gt;</code>, and the double-black is drawn dashed as well as
+      dark — so difficulty survives colour-blindness and greyscale.</li>
+    <li><strong>Content is never hidden without JS.</strong> The hero rise and scroll reveals are
+      gated behind a <code>.js</code> class set synchronously in <code>&lt;head&gt;</code> — kill
+      JavaScript and the whole page, board and map included, is fully legible.</li>
+  </ul>
+
+  <div class="callout"><p>The lift board, snow depth, prices and the pass checkout are a demo — the
+    numbers are invented and "Choose 6-day" charges nothing. Wire the board to a real lift feed and
+    the passes to a payment provider before selling a single day on the mountain.</p></div>
+
+  <h2>Ship it on GitHub Pages</h2>
+  <p>Nothing to build. Push the folder and point Pages at the root.</p>
+  <pre><code>gh repo create bswxyz/cornice --public --source . --push
+gh api --method POST /repos/bswxyz/cornice/pages -f 'source[branch]=main' -f 'source[path]=/'</code></pre>
+  <p>Relative paths and a <code>.nojekyll</code> file mean it serves from the project subpath without
+    a single config change. That's the whole point of the static build.</p>
+
+  <a class="doc-back" href="../" style="margin-top:2.6rem">← Back to Cornice</a>
+</main>
+</body>
+</html>
