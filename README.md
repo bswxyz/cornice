@@ -1,11 +1,43 @@
-# Cornice
+<!-- parable:beautified -->
+<div align="center">
 
-**Live:** https://bswxyz.github.io/cornice/ · **Build notes:** https://bswxyz.github.io/cornice/guide/
+<h1>Cornice</h1>
+
+<p><strong>Alpine ski resort — a live lift-status board + an interactive SVG piste map with difficulty filter.</strong></p>
+
+<p>
+  <a href="https://bswxyz.github.io/cornice/"><img alt="Live demo" src="https://img.shields.io/badge/demo-live-8b5cf6?style=flat-square&labelColor=1a1a1a"></a>
+  <img alt="Family" src="https://img.shields.io/badge/family-Parable-ec4899?style=flat-square&labelColor=1a1a1a">
+  <img alt="Stack" src="https://img.shields.io/badge/stack-HTML%2FJS-f5a623?style=flat-square&labelColor=1a1a1a">
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-22c55e?style=flat-square&labelColor=1a1a1a"></a>
+</p>
+
+<p>
+  <a href="https://bswxyz.github.io/cornice/"><b>Live demo</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://bswxyz.github.io/cornice/guide/">Build notes</a>
+  &nbsp;·&nbsp;
+  <a href="https://parable-three.vercel.app/templates">More templates</a>
+</p>
+
+<a href="https://bswxyz.github.io/cornice/">
+  <img src=".github/preview.jpg" alt="Cornice — live preview" width="100%">
+</a>
+
+</div>
+
+**Use this template** — copy the source into a new project:
+
+```bash
+npx degit bswxyz/cornice my-app
+```
+
+
 
 A high-alpine ski-resort site — a live lift-status board (counting wait times, pulsing status pills),
 an interactive SVG piste map you can filter by grade and trace run by run, and a falling-snow canvas
 that pauses when it can't be seen. Part of the
-[Parable design showcase](https://bswxyz.github.io/fable-hub/).
+[Parable design showcase](https://parable-three.vercel.app).
 
 ---
 
@@ -83,4 +115,4 @@ responsive / reduced-motion / keyboard layer.
 
 ## License
 
-[MIT](LICENSE). Design & build by **Parable** (Anthropic's Claude).
+[MIT](LICENSE). Design & build by **Parable**.
